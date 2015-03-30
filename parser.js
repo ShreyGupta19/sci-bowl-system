@@ -37,10 +37,11 @@ parserScope.parseData = function(dataString, callback){
 	qs.splice(0,1);
 	var qsData = [];
 	qs.forEach(function(q,qIndex){
+		//console.log(qIndex); //For debugging only.
 		var qSubject = q.match(/\d\) ([A-Z]| )*(M|S)/g)[0].replace(/\d\) /,""),
-			qType = (q.search("Multiple Choice")) ? "MC" : "SA",
-			qText = q.split(/Multiple Choice |Short Answer /)[1].split("ANSWER: ")[0].trim(),
-			qAnswer = q.split(/Multiple Choice |Short Answer /)[1].split("ANSWER: ")[1].trim();
+			qType = (q.search(/Multiple Choice/i)) ? "MC" : "SA",
+			qText = q.split(/Multiple Choice |Short Answer /i)[1].split("ANSWER: ")[0].trim(),
+			qAnswer = q.split(/Multiple Choice |Short Answer /i)[1].split("ANSWER: ")[1].trim();
 		qSubject = qSubject.substring(0,qSubject.length-2).trim();
 		qsData.push({"type":qType,"subject":qSubject,"question":qText,"answer":qAnswer,"source":parserScope.fileName});
 		if (qType === "MC"){

@@ -1,6 +1,6 @@
 {
-	"name": "Science-Bowl-System",
-	"version": "0.0.1",
+	"name": "Science-Bowl-Quiz-System",
+	"version": "0.0.2",
 	"description": "Basic science bowl quizzing application that separates the last 6 released DOE NSB sets into subjects and uses user login features to track user progress.",
 	"dependencies": {
 		"express": "4.10.x",
