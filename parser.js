@@ -33,29 +33,34 @@ parserScope.formatData = function(dataString, callback){
 	callback(null, dataString);
 };
 parserScope.parseData = function(dataString, callback){
-	var qs = dataString.split(/TOSS-UP |BONUS /);
+	var delimiter = "DELIMITER_STRING_1234567890"
+	dataString = dataString.replace(/TOSS-UP |BONUS /g, delimiter + "$&");
+	qs = dataString.split(delimiter);
 	qs.splice(0,1);
 	var qsData = [];
 	qs.forEach(function(q,qIndex){
 		//console.log(qIndex); //For debugging only.
-		var qSubject = q.match(/\d\) ([A-Z]| )*(M|S)/g)[0].replace(/\d\) /,""),
-			qType = (q.search(/Multiple Choice/i)) ? "MC" : "SA",
+		var qSubject = q.match(/\d\) ([A-Z]| )*(M|S)/g)[0].replace(/\d\) /,"").toLowerCase(),
+			qResponseType = (q.search(/Multiple Choice/i)!==-1) ? "mc" : "sa",
 			qText = q.split(/Multiple Choice |Short Answer /i)[1].split("ANSWER: ")[0].trim(),
-			qAnswer = q.split(/Multiple Choice |Short Answer /i)[1].split("ANSWER: ")[1].trim();
+			qAnswer = q.split(/Multiple Choice |Short Answer /i)[1].split("ANSWER: ")[1].trim(),
+			qQuestionType = (q.search(/TOSS-UP/)!==-1) ? "toss-up" : "bonus",
+			qNum = qIndex + 1,
+			qSource = parserScope.fileName;
 		qSubject = qSubject.substring(0,qSubject.length-2).trim();
-		qsData.push({"type":qType,"subject":qSubject,"question":qText,"answer":qAnswer,"source":parserScope.fileName});
-		if (qType === "MC"){
+		qsData.push({"responseType":qResponseType,"subject":qSubject,"question":qText,"answer":qAnswer,"source":qSource,"number":qNum,"type":qQuestionType});
+		if (qResponseType === "mc"){
 			qsData[qIndex].question = qText.replace(/W\)|X\)|Y\)|Z\)/g,"\n$&");
 		}
 		switch(qsData[qIndex].subject){
-			case "EARTH AND SPACE": case "ASTRONOMY": case "EARTH SCIENCE": qsData[qIndex].normSubject = "es"; break;
-			case "CHEMISTRY": qsData[qIndex].normSubject = "chem"; break;
-			case "BIOLOGY": qsData[qIndex].normSubject = "bio"; break;
-			case "ENERGY": qsData[qIndex].normSubject = "nrg"; break;
-			case "MATH": qsData[qIndex].normSubject = "math"; break;
-			case "PHYSICS": qsData[qIndex].normSubject = "phys"; break;
-			case "GENERAL SCIENCE": qsData[qIndex].normSubject = "gs-legacy"; break;
-			case "COMPUTER SCIENCE": qsData[qIndex].normSubject = "cs-legacy"; break;
+			case "earth and space": case "astronomy": case "earth science": qsData[qIndex].normSubject = "es"; break;
+			case "chemistry": qsData[qIndex].normSubject = "chem"; break;
+			case "biology": qsData[qIndex].normSubject = "bio"; break;
+			case "energy": qsData[qIndex].normSubject = "nrg"; break;
+			case "math": qsData[qIndex].normSubject = "math"; break;
+			case "physics": qsData[qIndex].normSubject = "phys"; break;
+			case "general science": qsData[qIndex].normSubject = "gs-legacy"; break;
+			case "computer Science": qsData[qIndex].normSubject = "cs-legacy"; break;
 		}
 	});
 	callback(null, qsData);
@@ -63,6 +68,7 @@ parserScope.parseData = function(dataString, callback){
 parserScope.insertData = function(questions,callback){
 	var questionsColl = db.docdb.collection('questionData');
 	questionsColl.insert(questions,function(err,records){
+		db.closeDb();
 		callback(null,records);
 	});
 };
