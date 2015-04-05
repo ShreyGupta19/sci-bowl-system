@@ -1,5 +1,9 @@
 var path = require('path');
 var db = require('./../db.js');
+var questionData = db.docdb.collection('questionData');
+var userData = db.docdb.collection('userData');
+var ObjectID = require('mongodb').ObjectID;
+var thisUser;
 
 function isEmpty(obj) {
 	var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -12,53 +16,34 @@ function isEmpty(obj) {
 
 module.exports.get = function(req,res){
 	if(!isEmpty(req.query)){
-		if(req.query.type==="randomQuestion"){
-			rooms.find({},{name:1,_id:0}).toArray(function(err,docs){
+		if(req.query.type==="getRandomQuestion"){
+			questionData.find({"normSubject":{$in:thisUser.questionsPref.subjectsPref},"type":{$in:thisUser.questionsPref.qTypesPref},"_id":{$nin:thisUser.questionIds}}).limit(1).toArray(function(err,docs){
 				if(err) throw err;
-				else if(!docs.length){
-					res.send({error:"No chat rooms found."});
-				}
 				else {
-					var groupNames = [];
-					docs.forEach(function(doc){
-						groupNames.push(doc.name);
-					});
-					res.send({names:groupNames});
+					res.send(docs[0]);
 				}
 			});
 		}
 	}
-	res.sendFile(path.join(__dirname, '../templates', 'quiz.html'));
+	else {
+		if (req.session.user) {
+			thisUser = req.session.user;
+			thisUser.questionIds = [];
+			thisUser.questionsAnswered.forEach(function(elem){
+				thisUser.questionIds.push(new ObjectID(elem.questionId));
+			});
+			res.sendFile(path.join(__dirname, '../templates', 'quiz.html'));
+		}			
+		else res.redirect("/");
+	}
 }
 
 module.exports.post = function(req,res){
-	if(req.body.type === "login"){
-		db.userData.find({email:req.body["login-email"],password:req.body["login-password"]}).toArray(function(err,docs){
+	if(req.body.type === "logQuestion"){
+		userData.update({"_id":new ObjectID(thisUser["_id"])},{$push:{"questionsAnswered":req.body.qData}},function(err,docs){
 			if(err) throw err;
-			else if(!docs.length){
-				res.send({error:"Incorrect email or password."});
-			}
-			else {
-				req.session.user = docs[0];
-				db.userData.update({email:docs[0].email}, {$push:{logins: new Date().toISOString()}}, function(err, result){
-					if(err) throw err;
-					res.send({redirect:'/quiz'});
-				});
-			}
-		});
-	}
-	else if(req.body.type === "register"){
-		var newUserDoc = {email:req.body["login-email"], password:req.body["login-password"], name:{first:req.body["login-name"].split(" ")[0], last:req.body["login-name"].split(" ")[1]}, logins:[new Date().toISOString()]};
-		db.userData.find({email:req.body["login-email"]}).toArray(function(err,docs){
-			if (err) throw err;
-			else if (docs.length) res.send({error: "You already have an account!"});
-			else {
-				db.userData.insert(newUserDoc,function(err,records){
-					if(err) throw err;
-					req.session.user = records[0];
-					res.send({redirect:'/quiz'});
-				});
-			}
+			thisUser.questionIds.push(new ObjectID(req.body.qData.questionId));
+			res.send({}); 
 		});
 	}
 };

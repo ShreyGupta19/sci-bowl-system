@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="./jquery/jquery-2.1.3.min.js"></script>
+	<script src="./bootstrap/js/bootstrap.min.js"></script>
+	<script src="./bootstrap/js/bootstrap-combobox.js"></script>
+	<link rel="stylesheet" href="./bootstrap/css/bootstrap.min.css" />
+	<style>
+		
+	</style>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<nav class="col-xs-12 navbar navbar-default eddy-navbar">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="#">Science Bowl Quiz System</a>
+					</div>
+				</div>
+			</nav>			
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
+				<h1>Setup your preferences!</h1>
+				<form action="/" method="post" class="form-horizontal user-preference-form">
+					<div class="form-group" id="subject-form-group">
+						<label for="subjectInput" class="control-label col-sm-2">Subjects</label>
+						<div class="col-sm-10" id="subjectInput">
+							<div class="checkbox"><label><input type="checkbox" class="subject-form-control" name="subjects" value="chem" />Chemistry</label></div>
+							<div class="checkbox"><label><input type="checkbox" class="subject-form-control" name="subjects" value="bio" /> Biology</label></div>
+							<div class="checkbox"><label><input type="checkbox" class="subject-form-control" name="subjects" value="phys" /> Physics</label></div>
+							<div class="checkbox"><label><input type="checkbox" class="subject-form-control" name="subjects" value="math" /> Mathematics</label></div>
+							<div class="checkbox"><label><input type="checkbox" class="subject-form-control" name="subjects" value="es" /> Earth &amp; Space</label></div>
+							<div class="checkbox"><label><input type="checkbox" class="subject-form-control" name="subjects" value="nrg" /> Energy</label></div>
+							<div class="checkbox"><label><input type="checkbox" class="subject-form-control" name="subjects" value="gs-legacy" /> Potpourri (General Science)</label></div>
+						</div>
+					</div>
+					<div class="form-group" id="qType-form-group">
+						<label for="qTypeInput" class="control-label col-sm-2">Question Types</label>
+						<div class="col-sm-10" id="qTypeInput">
+							<div class="checkbox"><label><input type="checkbox" class="qType-form-control" name="qTypes" value="toss-up" /> Toss-Up</label></div>
+							<div class="checkbox"><label><input type="checkbox" class="qType-form-control" name="qTypes" value="bonus" /> Bonus</label></div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button type="submit" class="btn btn-default sign-in-button" id="submit-button">Sign in</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function(){
+			$(".user-preference-form").submit(function(event) {
+				event.preventDefault();
+				var $form = $(this);
+				var postData = {"selectedSubjects":[],"selectedQTypes":[]};
+				$form.find("input[name=subjects]:checked").each(function(){
+					postData.selectedSubjects.push($(this).val());
+				});
+				$form.find("input[name=qTypes]:checked").each(function(){
+					postData.selectedQTypes.push($(this).val());
+				});
+				var postReq = $.post("/setup",postData,'json').success(function(data){
+					if (data.redirect)
+                		window.location = data.redirect;
+				});
+			});
+		});	
+	</script>
+</body>
+</html>

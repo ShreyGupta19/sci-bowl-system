@@ -1,15 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Socket.IO chat: %%%GROUPNAME_UPPERCASE%%%</title>
 	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="./jquery/jquery-2.1.3.min.js"></script>
+	<script src="./bootstrap/js/bootstrap.min.js"></script>
+	<script src="./scripts/quiz.js"></script>
+	<link rel="stylesheet" href="./bootstrap/css/bootstrap.min.css" />
+	<!--<script src="../public/jquery/jquery-2.1.3.min.js"></script>
+	<script src="../public/bootstrap/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="../public/bootstrap/css/bootstrap.min.css" />-->
+	<style>
+		#quiz-question:before{
+			content: attr(data-time-left);
+			position:absolute;
+			font-size: 100px;
+			color:rgba(150,150,150,0.5);
+			z-index: -5;
+			text-align: right;
+			width:100%;
+			line-height: 1.0;
+		}
+		#quiz-question {
+			position: relative;
+			text-align: left;
+		}
+		.quiz-form {
+			display: none;
+		}
+		#quiz-answer:before {
+			content: 'The answer is: ';
+		} 
+		#time-up-form-group {
+			display: none;
+		}
+	</style>
 </head>
 <body>
 	<div class="container-fluid">
-		<div class="row nav-row">
-			<nav class="col-xs-12 navbar navbar-default chat-navbar">
+		<div class="row">
+			<nav class="col-xs-12 navbar navbar-default eddy-navbar">
 				<div class="container-fluid">
 					<div class="navbar-header">
 						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -18,56 +49,39 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a class="navbar-brand" href="#">GRN Chat</a>
-					</div>
-					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-						<ul class="nav navbar-nav navbar-right">
-							<li><h1>%%%GROUPNAME_UPPERCASE%%% Chat Room</h1></li>
-							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Log in<span class="caret"></span></a>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="#">Some Link</a></li>
-									<li><a href="#">Some Link</a></li>
-									<li><a href="#">Some Link</a></li>
-									<li class="divider"></li>
-									<li><a href="#">Some Link</a></li>
-								</ul>
-							</li>
-						</ul>
+						<a class="navbar-brand" href="#">Science Bowl Quiz System</a>
 					</div>
 				</div>
-			</nav>		
+			</nav>			
 		</div>
-		<div class="row chat-row">
-			<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
-				<ul class="chat-messages-bin"></ul>
-			</div>
-		</div>
-		<div class="row form-row">
-			<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
-				<form action="" class="form-horizontal chat-message-form">
-					<div class="form-group" id="message-entry-form-group">
-						<input autocomplete="off" type="text" class="form-control message-input" placeholder="Enter message here!" name="message-input" />
-						<button class="btn btn-primary message-submit"><span class="glyphicon glyphicon-send"></span></button>
+		<div class="row">
+			<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3" style="text-align:center;">
+				<h1>Quiz Time!</h1>
+				<div id="quiz-question-categories">
+					<h2>CHEMISTRY, Multiple Choice</h2>
+				</div>
+				<div id="quiz-question">
+					Which of the following reagents would be labeled as highly flammable because of its low flash point:
+					<br/>W) glycerol
+					<br/>X) methanol
+					<br/>Y) carbon tetrachloride
+					<br/>Z) sulfuric acid
+				</div>
+				<button type="button" class="btn btn-primary" id="buzz-button">Buzz!</button>
+				<form class="form quiz-form">
+					<div id="quiz-answer">W) glycerol</div>
+					<div class="form-group" id="outcome-form-group">
+						<label>I got this question...</label><br/>
+						<button type="button" class="btn btn-success" id="correct-button">Correct! :)</button>
+						<button type="button" class="btn btn-danger" id="incorrect-button">Incorrect :(</button>
+					</div>
+					<div class="form-group" id="time-up-form-group">
+						<label>You ran out of time!</label><br/>
+						<button type="button" class="btn btn-primary" id="continue-button">Continue</button>
 					</div>
 				</form>
 			</div>
 		</div>
 	</div>
-	<script src="https://cdn.socket.io/socket.io-1.3.4.js"></script>
-	<script src="../jquery/jquery-2.1.3.min.js"></script>
-	<script src="../bootstrap/js/bootstrap.min.js"></script>
-	<script src="../scripts/chat.js"></script>
-	<script src="../color-gen/randomColor.min.js"></script>
-	<link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css"></script>
-	<link rel="stylesheet" href="../styles/chat.css"></script>
-	<script>
-		var getUserData = function(){
-			return "%%%USERDATA%%%";
-		}
-		var getGroup = function(){
-			return "%%%GROUPNAME%%%";
-		}
-	</script>
 </body>
 </html>

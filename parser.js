@@ -48,7 +48,7 @@ parserScope.parseData = function(dataString, callback){
 			qNum = qIndex + 1,
 			qSource = parserScope.fileName;
 		qSubject = qSubject.substring(0,qSubject.length-2).trim();
-		qsData.push({"responseType":qResponseType,"subject":qSubject,"question":qText,"answer":qAnswer,"source":qSource,"number":qNum,"type":qQuestionType});
+		qsData.push({"responseType":qResponseType,"subject":qSubject,"question":qText,"answer":qAnswer,"source":qSource,"number":qNum,"type":qQuestionType, "results":[]});
 		if (qResponseType === "mc"){
 			qsData[qIndex].question = qText.replace(/W\)|X\)|Y\)|Z\)/g,"\n$&");
 		}
