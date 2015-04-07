@@ -21,7 +21,7 @@ $(document).ready(function(){
 		},
 		updateUI: function(time) {
 			var timeString = 
-			$('#quiz-question').attr('data-time-left',((timerScope.timerMax-time)/1000).toFixed(2)+"");
+			$('#quiz-question').attr('data-time-left',((timerScope.timerMax-time)/1000).toFixed(1)+"");
 		},
 		done: function(){
 			toggleUI("time-up");
